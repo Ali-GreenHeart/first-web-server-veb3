@@ -1,6 +1,7 @@
 import express from 'express'
 import userAgent from "express-useragent"
 import readDbFile, { writeDbFile } from './middlewares/dbIO.js';
+import * as DB from './db.js';
 
 const app = express()
 const port = 3000
@@ -9,19 +10,16 @@ app.use(userAgent.express());
 // create read update delete -> db (file)
 // post, get, put/patch, delete -> verb
 
-
+app.use(express.json())
 app.use('/users', readDbFile);
 app.get('/users',
     async (req, res) => res.send(req.users)
 )
 
+
 app.post("/users",
     async (req, res, next) => {
-        req.users.push({
-            "name": "ali2",
-            "age": 14,
-            "email": "2elinemet.isiyev@mail.ru"
-        })
+        req.users.push(req.body)
         req.data = JSON.stringify(req.users)
         next()
     },
